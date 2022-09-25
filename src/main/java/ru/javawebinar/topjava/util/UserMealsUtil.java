@@ -47,6 +47,9 @@ public class UserMealsUtil {
         for (UserMeal meal : meals) {
             calories.put(meal.getDateTime().toLocalDate(),calories.getOrDefault(meal.getDateTime().toLocalDate(),0)+meal.getCalories());
         }
+        for (UserMeal meal : meals) {
+            calories.put(meal.getDateTime().toLocalDate(),calories.getOrDefault(meal.getDateTime().toLocalDate(),0)+meal.getCalories());
+        }
 
         for (UserMeal meal : meals) {
             if (TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime)) {
