@@ -23,75 +23,82 @@ public class UserMealsUtil {
     }
 
     /**
-     * Получить отфильтрованный список приемов пищи (реализация через циклы)
+     * Get a filtered list of meals (implementation via loops)
      *
-     * @param meals          список приемов пищи
-     * @param startTime      начало времени поиска
-     * @param endTime        конец времени поиска
-     * @param caloriesPerDay максимальная величина калорий в день
-     * @return отфильтрованный список приемов пищи
+     * @param meals          list of meals
+     * @param startTime      search time start
+     * @param endTime        search end start
+     * @param caloriesPerDay maximum calories per day
+     * @return filtered list of meals
      */
-    public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        // TODO return filtered list with excess. Implement by cycles
-//          Collections.sort(meals,(o1, o2) -> o1.getDateTime().compareTo(o1.getDateTime()));
-        List<UserMealWithExcess> mealsWithExcess = new ArrayList<>();
-        Map<LocalDate, Integer> calories = new HashMap<>();
+    public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime,
+                                                            LocalTime endTime, int caloriesPerDay) {
+        Map<LocalDate, Integer> mapCaloriesPerDay = new HashMap<>();
         for (UserMeal meal : meals) {
-            calories.put(meal.getDateTime().toLocalDate(), calories.getOrDefault(meal.getDateTime().toLocalDate(), 0) + meal.getCalories());
+            mapCaloriesPerDay.put(meal.getDateTime().toLocalDate(), mapCaloriesPerDay.getOrDefault(meal.getDateTime().toLocalDate(),
+                    0) + meal.getCalories());
         }
 
+        List<UserMealWithExcess> mealsWithExcess = new ArrayList<>();
         for (UserMeal meal : meals) {
             if (TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime)) {
-                mealsWithExcess.add(new UserMealWithExcess(meal.getDateTime(), meal.getDescription(), meal.getCalories(), isExcess(calories, meal.getDateTime().toLocalDate(), caloriesPerDay)));
+                mealsWithExcess.add(new UserMealWithExcess(meal.getDateTime(), meal.getDescription(),
+                        meal.getCalories(),
+                        mapCaloriesPerDay.get(meal.getDateTime().toLocalDate()) > caloriesPerDay));
             }
         }
         return mealsWithExcess;
     }
 
-    private static boolean isExcess(Map<LocalDate, Integer> caloriesMap, LocalDate date, int caloriesPerDay) {
-        return caloriesMap.get(date) > caloriesPerDay;
-    }
-
     /**
-     * Получить отфильтрованный список приемов пищи (реализация через стримы)
+     * Get a filtered list of meals (implementation via streams)
      *
-     * @param meals          список приемов пищи
-     * @param startTime      начало времени поиска
-     * @param endTime        конец времени поиска
-     * @param caloriesPerDay максимальная величина калорий в день
-     * @return отфильтрованный список приемов пищи
+     * @param meals          list of meals
+     * @param startTime      search time start
+     * @param endTime        search end start
+     * @param caloriesPerDay maximum calories per day
+     * @return filtered list of meals
      */
-    public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        Map<LocalDate, Integer> map = meals.stream().collect(Collectors.groupingBy(meal -> meal.getDateTime().toLocalDate(), Collectors.summingInt(UserMeal::getCalories)));
-        List<UserMealWithExcess> list = meals.stream().filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime)).map(meal -> new UserMealWithExcess(meal.getDateTime(), meal.getDescription(), meal.getCalories(), isExcess(map, meal.getDateTime().toLocalDate(), caloriesPerDay))).collect(Collectors.toList());
-        return list;
-    }
-
-    private static void internalFilteredByCyclesOptional(Map<LocalDate, Integer> calories, List<UserMeal> meals, int index, LocalTime startTime, LocalTime endTime, int caloriesPerDay, List<UserMealWithExcess> mealsWithExcess) {
-        if (index < meals.size()) {
-            UserMeal meal = meals.get(index);
-            calories.put(meal.getDateTime().toLocalDate(), calories.getOrDefault(meal.getDateTime().toLocalDate(), 0) + meal.getCalories());
-            internalFilteredByCyclesOptional(calories, meals, ++index, startTime, endTime, caloriesPerDay, mealsWithExcess);
-
-            if (TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime)) {
-                mealsWithExcess.add(new UserMealWithExcess(meal.getDateTime(), meal.getDescription(), meal.getCalories(), isExcess(calories, meal.getDateTime().toLocalDate(), caloriesPerDay)));
-            }
-        }
+    public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime,
+                                                             LocalTime endTime, int caloriesPerDay) {
+        Map<LocalDate, Integer> caloriesMap = meals.stream()
+                .collect(Collectors.groupingBy(meal ->meal.getDateTime().toLocalDate(),
+                        Collectors.summingInt(UserMeal::getCalories)));
+        return meals.stream()
+                .filter(meal ->TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime))
+                .map(meal -> new UserMealWithExcess(meal.getDateTime(), meal.getDescription(), meal.getCalories(),
+                                caloriesMap.get(meal.getDateTime().toLocalDate()) > caloriesPerDay))
+                .collect(Collectors.toList());
     }
 
     /**
-     * Получить отфильтрованный список приемов пищи за один проход (реализация через цикл)
+     * Get a filtered list of meals in one pass(implementation via loops)
      *
-     * @param meals          список приемов пищи
-     * @param startTime      начало времени поиска
-     * @param endTime        конец времени поиска
-     * @param caloriesPerDay максимальная величина калорий в день
-     * @return отфильтрованный список приемов пищи
+     * @param meals          list of meals
+     * @param startTime      search time start
+     * @param endTime        search end start
+     * @param caloriesPerDay maximum calories per day
+     * @return filtered list of meals
      */
     public static List<UserMealWithExcess> filteredByCyclesOptional(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         List<UserMealWithExcess> mealsWithExcess = new ArrayList<>();
-        Map<LocalDate, Integer> calories = new HashMap<>();
-        internalFilteredByCyclesOptional(calories, meals, 0, startTime, endTime, caloriesPerDay, mealsWithExcess);
+        Map<LocalDate, Integer> mapCaloriesPerDay = new HashMap<>();
+        internalFilteredByCyclesOptional(mapCaloriesPerDay, meals, 0, startTime, endTime, caloriesPerDay, mealsWithExcess);
         return mealsWithExcess;
+    }
+    private static void internalFilteredByCyclesOptional(Map<LocalDate, Integer> mapCaloriesPerDay, List<UserMeal> meals, int index, LocalTime startTime, LocalTime endTime, int caloriesPerDay, List<UserMealWithExcess> mealsWithExcess) {
+        if (index < meals.size()) {
+            UserMeal meal = meals.get(index);
+            mapCaloriesPerDay.put(meal.getDateTime().toLocalDate(),
+                    mapCaloriesPerDay.getOrDefault(meal.getDateTime().toLocalDate(), 0) + meal.getCalories());
+            internalFilteredByCyclesOptional(mapCaloriesPerDay, meals, ++index, startTime, endTime, caloriesPerDay,
+                    mealsWithExcess);
+
+            if (TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime)) {
+                mealsWithExcess.add(new UserMealWithExcess(meal.getDateTime(), meal.getDescription(),
+                        meal.getCalories(),
+                        mapCaloriesPerDay.get(meal.getDateTime().toLocalDate()) > caloriesPerDay));
+            }
+        }
     }
 }
