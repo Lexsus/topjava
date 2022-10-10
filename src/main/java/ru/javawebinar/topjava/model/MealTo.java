@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class UserMealWithExcess {
     private final LocalDateTime dateTime;
@@ -27,4 +28,21 @@ public class UserMealWithExcess {
                 ", excess=" + excess +
                 '}';
     }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getCalories() {
+        return calories;
+    }
+
+    public boolean getExcess() {
+        return excess;
+    }
+
 }
