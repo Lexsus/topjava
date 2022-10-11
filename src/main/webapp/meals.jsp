@@ -11,13 +11,13 @@
 <hr>
 <h2>Meals</h2>
 <h3><a href="index.html">Home</a></h3>
-<c:set var = "mealList"  value = '${requestScope["meals"]}'/>
-<c:out value = "${mealList}"/>
+<c:set var="mealList" value='${requestScope["meals"]}'/>
 <table>
     <tr>
         <th>Description</th>
         <th>Date</th>
         <th>Calories</th>
+        <th>Action</th>
     </tr>
     <c:forEach items="${mealList}" var="meal" varStatus="status">
         <c:if test="${meal.excess}">
@@ -25,6 +25,7 @@
                 <td>${meal.description}</td>
                 <td>${meal.dateTime.format( DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm:ss"))}</td>
                 <td>${meal.calories}</td>
+                <td><a href="MealsServlet?action=delete&mealId=<c:out value="${meal.id}"/>">Delete</a></td>
             </tr>
         </c:if>
 
@@ -33,6 +34,7 @@
                 <td>${meal.description}</td>
                 <td>${meal.dateTime.format( DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm:ss"))}</td>
                 <td>${meal.calories}</td>
+                <td><a href="MealsServlet?action=delete&mealId=<c:out value="${meal.id}"/>">Delete</a></td>
             </tr>
         </c:if>
     </c:forEach>
