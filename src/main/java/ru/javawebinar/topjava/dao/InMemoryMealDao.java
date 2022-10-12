@@ -4,46 +4,50 @@ import ru.javawebinar.topjava.model.MealTo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class InMemoryMealDao implements IMealDao {
+public class InMemoryMealDao implements MealDao {
 
-    private static int idCount = 0;
-    private List<MealTo> meals;
+    private static AtomicInteger idCount = new AtomicInteger();
+
+    private Map<Integer, MealTo> meals;
 
     public InMemoryMealDao() {
-        meals = new ArrayList<>();
+        meals = new ConcurrentHashMap<>();
     }
 
     @Override
-    public void addMeal(MealTo meal) {
-        meal.setId(idCount++);
-        meals.add(meal);
+    public MealTo get(int id) {
+        return meals.get(id);
+    }
+
+    @Override
+    public void add(MealTo meal) {
+        int id = idCount.getAndIncrement();
+        meal.setId(id);
+        meals.put(id, meal);
     }
 
     @Override
     public List<MealTo> getAllMeals() {
-        return meals;
+        return new ArrayList<MealTo>(meals.values());
     }
 
     @Override
-    public void updateMeal(MealTo meal) {
-
+    public void update(MealTo meal) {
+        MealTo mealUpdate = meals.get(meal.getId());
+        if (mealUpdate != null) {
+            meals.put(meal.getId(), meal);
+        }
     }
 
     @Override
-    public void deleteMeal(int idMeal) {
-        int index = getMealIndex(idMeal);
-        if (index > 0) {
-            meals.remove(index);
+    public void delete(int idMeal) {
+        MealTo meal = meals.get(idMeal);
+        if (meal != null) {
+            meals.remove(idMeal);
         }
-    }
-
-    private int getMealIndex(int idMeal) {
-        for (int i = 0; i < meals.size(); i++) {
-            if (meals.get(i).getId() == idMeal) {
-                return i;
-            }
-        }
-        return -1;
     }
 }
