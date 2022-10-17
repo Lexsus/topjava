@@ -33,7 +33,6 @@ public class MealService {
         return checkNotFoundWithId(repository.get(id, idUser), id);
     }
 
-    //TODO нужна ли фтльтрация по юзеру?
     public List<Meal> getAll(int idUser) {
         return (List<Meal>) repository.getAll(idUser);
     }
