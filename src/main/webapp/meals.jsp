@@ -23,6 +23,30 @@
     <h2>Meals</h2>
     <a href="meals?action=create">Add Meal</a>
     <br><br>
+    <form action="meals" method="post">
+        Select a Category:&nbsp;
+        <select name="user">
+            <c:forEach items="${requestScope.listUsers}" var="user">
+                <option value="${user}">${user}</option>
+            </c:forEach>
+        </select>
+        <br/><br/>
+        <input type="submit" value="Submit" />
+    </form>
+    <form action="meals" method="post">
+        Select a Start Date:&nbsp;
+        <br/><br/>
+        <input type="date" value="${startDate}" name="startDate" />
+        <input type="submit" value="Submit">
+    </form>
+
+    <form action="meals" method="post">
+        Select a End Date:&nbsp;
+        <br/><br/>
+        <input type="date" value="Submit" value="${endDate}" name="endDate" />
+        <input type="submit" value="Submit">
+    </form>
+
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>

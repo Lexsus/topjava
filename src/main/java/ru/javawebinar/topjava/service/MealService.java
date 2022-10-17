@@ -1,5 +1,7 @@
 package ru.javawebinar.topjava.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.web.SecurityUtil;
@@ -10,6 +12,7 @@ import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
+@Service
 public class MealService {
 
     private MealRepository repository;
@@ -22,21 +25,21 @@ public class MealService {
         return repository.save(meal, idUser);
     }
 
-    public void delete(int id,int idUser) {
+    public void delete(int id, int idUser) {
         checkNotFoundWithId(repository.delete(id, idUser), id);
     }
 
-    public Meal get(int id,int idUser) {
-        return checkNotFoundWithId(repository.get(id, idUser),id);
+    public Meal get(int id, int idUser) {
+        return checkNotFoundWithId(repository.get(id, idUser), id);
     }
 
     //TODO нужна ли фтльтрация по юзеру?
-    public List<Meal> getAll() {
-        return (List<Meal>) repository.getAll();
+    public List<Meal> getAll(int idUser) {
+        return (List<Meal>) repository.getAll(idUser);
     }
 
-    public Collection<Meal> getAll(LocalDateTime startDateTime, LocalDateTime endDateTime){
-        return (List<Meal>) repository.getAll(startDateTime, endDateTime);
+    public Collection<Meal> getAll(int idUser, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        return (List<Meal>) repository.getAll(idUser, startDateTime, endDateTime);
     }
 
     public void update(Meal meal, int idUser) {
