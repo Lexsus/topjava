@@ -14,9 +14,6 @@ import java.util.List;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
-//TODO Сделать преобразование в MEalto
-//TODO Сделать фильтр по DateTime
-
 @Controller
 public class MealRestController {
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -24,13 +21,11 @@ public class MealRestController {
     @Autowired
     private MealService service;
 
-    //TODO нужна ли фильтрация по юзеру
     public List<Meal> getAll() {
         log.info("getAll");
         return service.getAll(SecurityUtil.authUserId());
     }
 
-    //TODO проверить время
     public List<Meal> getAllFiltered(LocalDate startDate, LocalDate endDate) {
         log.info("getAll");
         return (List<Meal>) service.getFilteredAll(SecurityUtil.authUserId(), startDate.atTime(0, 0),

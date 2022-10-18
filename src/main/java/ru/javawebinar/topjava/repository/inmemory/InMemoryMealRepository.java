@@ -58,7 +58,7 @@ public class InMemoryMealRepository implements MealRepository {
     public List<Meal> getAll(int userId) {
         return repository.values().stream()
                 .filter(it -> isAuthUser(it, userId))
-                .sorted(Comparator.comparing(Meal::getDate).reversed())//TODO  проверить сортировку
+                .sorted(Comparator.comparing(Meal::getDate).reversed())
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
@@ -66,12 +66,11 @@ public class InMemoryMealRepository implements MealRepository {
     private List<Meal> filterByPredicate(Predicate<Meal> filter) {
         return repository.values().stream()
                 .filter(filter)
-                .sorted(Comparator.comparing(Meal::getDate).reversed())//TODO  проверить сортировку
+                .sorted(Comparator.comparing(Meal::getDate).reversed())
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
 
-    //TODO  проверить работу
     @Override
     public List<Meal> getFilteredAll(int userId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         LocalDateTime newStartDateTime = startDateTime.with(LocalTime.of(0, 0, 0));
