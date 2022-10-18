@@ -73,10 +73,6 @@ public class User extends AbstractNamedEntity {
         return roles;
     }
 
-    public boolean isNew() {
-        return id == null;
-    }
-
     public void setRoles(Collection<Role> roles) {
         this.roles = CollectionUtils.isEmpty(roles) ? EnumSet.noneOf(Role.class) : EnumSet.copyOf(roles);
     }

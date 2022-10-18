@@ -19,7 +19,7 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
 @Controller
 public class MealRestController {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private MealService service;
@@ -30,11 +30,10 @@ public class MealRestController {
         return service.getAll(SecurityUtil.authUserId());
     }
 
-    //TODO нужна ли фильтрация по юзеру
     //TODO проверить время
-    public List<Meal> getAll(LocalDate startDate, LocalDate endDate) {
+    public List<Meal> getAllFiltered(LocalDate startDate, LocalDate endDate) {
         log.info("getAll");
-        return (List<Meal>) service.getAll(SecurityUtil.authUserId(), startDate.atTime(0, 0),
+        return (List<Meal>) service.getFilteredAll(SecurityUtil.authUserId(), startDate.atTime(0, 0),
                 endDate.atTime(23, 59, 59));
     }
 
