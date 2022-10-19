@@ -28,7 +28,7 @@ public class MealRestController {
 
     public List<Meal> getAllFiltered(LocalDate startDate, LocalDate endDate) {
         log.info("getAll");
-        return (List<Meal>) service.getFilteredAll(SecurityUtil.authUserId(), startDate.atTime(0, 0),
+        return service.getFilteredAll(SecurityUtil.authUserId(), startDate.atTime(0, 0),
                 endDate.atTime(23, 59, 59));
     }
 

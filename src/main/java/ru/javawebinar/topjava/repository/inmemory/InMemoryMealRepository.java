@@ -4,7 +4,6 @@ import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.DateTimeUtil;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -35,8 +34,8 @@ public class InMemoryMealRepository implements MealRepository {
             mealsOfUsers.put(meal.getId(), userId);
             return meal;
         }
-        if (isAuthUser(meal.getId(), userId)) {
-            throw new NotFoundException("unauthorized user");
+        if (!isOwnerUser(meal.getId(), userId)) {
+            return null;
         }
         // handle case: update, but not present in storage
         return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
@@ -44,20 +43,20 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        if (isAuthUser(id, userId)) return false;
+        if (!isOwnerUser(id, userId)) return false;
         return repository.remove(id) != null;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        if (isAuthUser(id, userId)) return null;
+        if (!isOwnerUser(id, userId)) return null;
         return repository.get(id);
     }
 
     @Override
     public List<Meal> getAll(int userId) {
         return repository.values().stream()
-                .filter(it -> isAuthUser(it, userId))
+                .filter(it -> isOwnerUser(it.getId(), userId))
                 .sorted(Comparator.comparing(Meal::getDate).reversed())
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
@@ -75,19 +74,14 @@ public class InMemoryMealRepository implements MealRepository {
     public List<Meal> getFilteredAll(int userId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         LocalDateTime newStartDateTime = startDateTime.with(LocalTime.of(0, 0, 0));
         LocalDateTime newEndDateTime = endDateTime.with(LocalTime.of(23, 59, 59));
-        return filterByPredicate(meal -> isAuthUser(meal, userId) && DateTimeUtil.isBetweenHalfOpen(meal.getDateTime(), newStartDateTime, newEndDateTime));
+        return filterByPredicate(meal -> isOwnerUser(meal.getId(), userId) && DateTimeUtil.isBetweenHalfOpen(meal.getDateTime(), newStartDateTime, newEndDateTime));
     }
 
-    private boolean isAuthUser(Meal meal, int idUser) {
-        Integer ownerId = mealsOfUsers.get(meal.getId());
-        return !((ownerId == null) || (!ownerId.equals(idUser)));
-    }
-
-    private boolean isAuthUser(int id, int userId) {
+    private boolean isOwnerUser(int id, int userId) {
         Integer ownerId = mealsOfUsers.get(id);
         if ((ownerId == null) || (!ownerId.equals(userId)))
-            return true;
-        return false;
+            return false;
+        return true;
     }
 }
 

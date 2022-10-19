@@ -32,19 +32,16 @@ public class MealServlet extends HttpServlet {
 
     @Override
     public void destroy() {
-        super.destroy();
         appCtx.close();
+        super.destroy();
     }
 
     //    private UserRestController userRestController;
     @Override
     public void init() {
-
-        String str = ";";
         appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
         mealRestController = appCtx.getBean(MealRestController.class);
         System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
-        str = Arrays.toString(appCtx.getBeanDefinitionNames());
         for (Meal meal : MealsUtil.meals) {
             mealRestController.create(meal);
         }
