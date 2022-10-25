@@ -19,6 +19,7 @@ import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.NOT_FOUND;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
+import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 
 @ContextConfiguration({"classpath:spring/spring-app.xml", "classpath:spring/spring-db.xml"})
 @RunWith(SpringRunner.class)
@@ -51,9 +52,19 @@ public class MealServiceTest {
     }
 
     @Test
+    public void get_alien() {
+        assertThrows(NotFoundException.class,()->service.get(MEAT_ID, ADMIN_ID));
+    }
+
+    @Test
     public void delete() {
         service.delete(MEAT_ID, USER_ID);
         assertThrows(NotFoundException.class, () -> service.get(MEAT_ID, USER_ID));
+    }
+
+    @Test
+    public void delete_alien() {
+        assertThrows(NotFoundException.class,()->service.delete(MEAT_ID, ADMIN_ID));
     }
 
     @Test
@@ -74,6 +85,13 @@ public class MealServiceTest {
         service.update(updated, USER_ID);
         assertMatch(service.get(MEAT_ID, USER_ID), getUpdated());
     }
+
+    @Test
+    public void update_alien() {
+        Meal updated = getUpdated();
+        assertThrows(NotFoundException.class,()->service.update(updated, ADMIN_ID));
+    }
+
 
     @Test
     public void getNotFound() {
