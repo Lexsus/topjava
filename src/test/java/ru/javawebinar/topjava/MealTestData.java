@@ -9,10 +9,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class MealTestData {
-    public static final int USER_ID = START_SEQ;
-    public static final int ADMIN_ID = START_SEQ + 1;
-    public static final int GUEST_ID = START_SEQ + 2;
-    public static final int NOT_FOUND = 10;
     public static final int MEAT_ID = START_SEQ + 3;
     public static final int SOUP_ID = START_SEQ + 4;
     public static final int PANCAKES_ID = START_SEQ + 5;
@@ -30,7 +26,7 @@ public class MealTestData {
     }
 
     public static Meal getNew() {
-        return new Meal(LocalDateTime.of(2016, 01, 10, 00, 51, 14), "hamburger", 100);
+        return new Meal(LocalDateTime.of(2016, 1, 10, 0, 51, 14), "hamburger", 100);
     }
 
     public static void assertMatch(Meal actual, Meal expected) {
@@ -42,6 +38,6 @@ public class MealTestData {
     }
 
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
-        assertThat(actual).usingRecursiveFieldByFieldElementComparatorIgnoringFields().isEqualTo(expected);
+        assertThat(actual).usingRecursiveFieldByFieldElementComparator().isEqualTo(expected);
     }
 }
