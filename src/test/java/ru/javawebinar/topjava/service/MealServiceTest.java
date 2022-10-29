@@ -1,7 +1,12 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Stopwatch;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
@@ -13,6 +18,9 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -27,6 +35,22 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(MealServiceTest.class);
+
+    static Map<String, Long> resultsTest = new LinkedHashMap<>();
+    private final static int countTest = 12;
+
+    private static void logInfo(Description description, String status, long nanos) {
+        String testName = description.getMethodName();
+        logger.info(String.format("Test %s %s, spent %d microseconds",
+                testName, status, TimeUnit.NANOSECONDS.toMicros(nanos)));
+    }
+
+    private static void logInfo(String testName, long nanos) {
+        logger.info(String.format("Test  %s, spent %d microseconds",
+                testName, TimeUnit.NANOSECONDS.toMicros(nanos)));
+    }
+
     @Autowired
     private MealService service;
 
@@ -35,6 +59,39 @@ public class MealServiceTest {
         service.delete(MEAL1_ID, USER_ID);
         assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, USER_ID));
     }
+
+    @Rule
+    public Stopwatch stopwatch = new Stopwatch() {
+
+
+//        @Overrides
+//        protected void succeeded(long nanos, Descripti13n description) {
+//            logInfo(description, "succeeded", nanos);
+//        }
+//
+//        @Override
+//        protected void failed(long nanos, Throwable e, Description description) {
+//            logInfo(description, "failed", nanos);
+//        }
+//
+//        @Override
+//        protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
+//            logInfo(description, "skipped", nanos);
+//        }
+
+        @Override
+        protected void finished(long nanos, Description description) {
+            logInfo(description, "finished", nanos);
+            String strMethod = description.getMethodName();
+            resultsTest.put(description.getMethodName(), nanos);
+            if (resultsTest.size() >= countTest) {
+                for (Map.Entry<String, Long> result :
+                        resultsTest.entrySet()) {
+                    logInfo(result.getKey(), result.getValue());
+                }
+            }
+        }
+    };
 
     @Test
     public void deleteNotFound() {
