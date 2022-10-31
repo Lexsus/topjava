@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Stopwatch;
@@ -38,21 +39,9 @@ public class MealServiceTest {
     private static final Logger logger = LoggerFactory.getLogger(MealServiceTest.class);
 
     static Map<String, Long> resultsTest = new LinkedHashMap<>();
-    private final static int countTest = 12;
-
-    private static void logInfo(Description description, String status, long nanos) {
-        String testName = description.getMethodName();
-        logger.info(String.format("Test %s %s, spent %d microseconds",
-                testName, status, TimeUnit.NANOSECONDS.toMicros(nanos)));
-    }
-
-    private static void logInfo(String testName, long nanos) {
-        logger.info(String.format("Test  %s, spent %d microseconds",
-                testName, TimeUnit.NANOSECONDS.toMicros(nanos)));
-    }
-
     @Autowired
     private MealService service;
+
 
     @Test
     public void delete() {
@@ -62,36 +51,25 @@ public class MealServiceTest {
 
     @Rule
     public Stopwatch stopwatch = new Stopwatch() {
-
-
-//        @Overrides
-//        protected void succeeded(long nanos, Descripti13n description) {
-//            logInfo(description, "succeeded", nanos);
-//        }
-//
-//        @Override
-//        protected void failed(long nanos, Throwable e, Description description) {
-//            logInfo(description, "failed", nanos);
-//        }
-//
-//        @Override
-//        protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
-//            logInfo(description, "skipped", nanos);
-//        }
-
         @Override
         protected void finished(long nanos, Description description) {
-            logInfo(description, "finished", nanos);
-            String strMethod = description.getMethodName();
-            resultsTest.put(description.getMethodName(), nanos);
-            if (resultsTest.size() >= countTest) {
-                for (Map.Entry<String, Long> result :
-                        resultsTest.entrySet()) {
-                    logInfo(result.getKey(), result.getValue());
-                }
-            }
+            long milliseconds = TimeUnit.NANOSECONDS.toMillis(nanos);
+            String testName = description.getMethodName();
+            logger.info(String.format("Test %s %d ms",
+                    testName, milliseconds));
+            resultsTest.put(testName, milliseconds);
         }
     };
+
+    @AfterClass
+    public static void summary() {
+        for (Map.Entry<String, Long> result :
+                resultsTest.entrySet()) {
+            logger.info(String.format("Test  %s : %d ms",
+                    result.getKey(), result.getValue()));
+            ;
+        }
+    }
 
     @Test
     public void deleteNotFound() {
