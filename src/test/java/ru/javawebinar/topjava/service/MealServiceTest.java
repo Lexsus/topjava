@@ -19,8 +19,6 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
@@ -38,7 +36,7 @@ public class MealServiceTest {
 
     private static final Logger logger = LoggerFactory.getLogger(MealServiceTest.class);
 
-    static Map<String, Long> resultsTest = new LinkedHashMap<>();
+    static private StringBuilder testResults = new StringBuilder();
     @Autowired
     private MealService service;
 
@@ -54,21 +52,16 @@ public class MealServiceTest {
         @Override
         protected void finished(long nanos, Description description) {
             long milliseconds = TimeUnit.NANOSECONDS.toMillis(nanos);
-            String testName = description.getMethodName();
-            logger.info(String.format("Test %s %d ms",
-                    testName, milliseconds));
-            resultsTest.put(testName, milliseconds);
+            String strResult = String.format("%s %d ms", description.getMethodName(), milliseconds);
+            logger.info(strResult);
+            testResults.append(strResult);
+            testResults.append("\n");
         }
     };
 
     @AfterClass
-    public static void summary() {
-        for (Map.Entry<String, Long> result :
-                resultsTest.entrySet()) {
-            logger.info(String.format("Test  %s : %d ms",
-                    result.getKey(), result.getValue()));
-            ;
-        }
+    public static void printSummary() {
+       logger.info(testResults.toString());
     }
 
     @Test
