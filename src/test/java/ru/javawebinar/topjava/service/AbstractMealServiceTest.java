@@ -26,10 +26,11 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
     @Autowired
     private org.springframework.core.env.Environment environment;
 
-    private boolean isJdbcActiveProfile(){
+    private boolean isJdbcActiveProfile() {
         return Arrays.stream(environment.getActiveProfiles()).anyMatch(
-                env -> (env.equalsIgnoreCase("jdbc") ));
+                env -> (env.equalsIgnoreCase("jdbc")));
     }
+
     @Test
     public void delete() {
         service.delete(MEAL1_ID, USER_ID);
