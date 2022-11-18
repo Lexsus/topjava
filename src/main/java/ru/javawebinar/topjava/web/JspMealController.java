@@ -59,11 +59,8 @@ public class JspMealController {
 
         log.info("filter meals");
         int userId = SecurityUtil.authUserId();
-        LocalDateTime fromDateAndTime = LocalDateTime.of(localStartDate,
-                localStartTime);
-        LocalDateTime toDateAndTime = LocalDateTime.of(localEndDate,
-                localEndTime);
-        model.addAttribute("meals", MealsUtil.getTos(service.getBetweenInclusive(localStartDate, localEndDate, userId), SecurityUtil.authUserCaloriesPerDay()));
+        model.addAttribute("meals", MealsUtil.getFilteredTos(service.getBetweenInclusive(localStartDate, localEndDate, userId),
+                SecurityUtil.authUserCaloriesPerDay(),localStartTime, localEndTime));
         return "meals";
     }
 
