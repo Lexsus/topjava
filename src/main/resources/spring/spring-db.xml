@@ -13,16 +13,7 @@
        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd">
 
-    <!-- Enable Annotation based Declarative Transaction Management -->
-    <tx:annotation-driven proxy-target-class="true"
-                          transaction-manager="transactionJdbcManager" />
 
-    <!-- Creating TransactionManager Bean, since JDBC we are creating of type
-		DataSourceTransactionManager -->
-    <bean id="transactionJdbcManager"
-          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource" />
-    </bean>
 
     <jdbc:initialize-database data-source="dataSource" enabled="${database.init}">
         <jdbc:script location="${jdbc.initLocation}"/>
@@ -69,6 +60,17 @@
     </beans>
 
     <beans profile="jdbc">
+        <!-- Enable Annotation based Declarative Transaction Management -->
+        <tx:annotation-driven proxy-target-class="true"
+                              transaction-manager="transactionJdbcManager" />
+
+        <!-- Creating TransactionManager Bean, since JDBC we are creating of type
+            DataSourceTransactionManager -->
+        <bean id="transactionJdbcManager"
+              class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+            <property name="dataSource" ref="dataSource" />
+        </bean>
+
         <context:component-scan base-package="ru.javawebinar.**.repository.jdbc"/>
         <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
             <constructor-arg ref="dataSource"/>

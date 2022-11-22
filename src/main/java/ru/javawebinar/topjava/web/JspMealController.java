@@ -8,7 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.MealsUtil;
 
@@ -25,7 +24,7 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 
 @Controller
 public class JspMealController {
-    private static final Logger log = LoggerFactory.getLogger(RootController.class);
+    private static final Logger log = LoggerFactory.getLogger(JspMealController.class);
 
     @Autowired
     private MealService service;
@@ -38,17 +37,16 @@ public class JspMealController {
         model.addAttribute("meals", MealsUtil.getTos(service.getAll(userId), SecurityUtil.authUserCaloriesPerDay()));
         return "meals";
     }
-
-    @GetMapping(value = {"/meals"}, params = {"action=delete", "id"})
-    public String deleteMeal(@RequestParam(value = "action") String action, @RequestParam(value = "id") Integer id, Model model) {
+    @GetMapping(value = {"/meals/delete"}, params = {"id"})
+    public String deleteMeal(@RequestParam(value = "id") Integer id, Model model) {
         log.info("delete meals");
         int userId = SecurityUtil.authUserId();
         service.delete(id, userId);
         return "redirect:meals";
     }
 
-    @GetMapping(value = {"/meals"}, params = {"action=filter", "startDate", "endDate", "startTime", "endTime"})
-    public String filterMeals(@RequestParam(value = "action") String action, @RequestParam(value = "startDate") String startDate,
+    @GetMapping(value = {"/meals/filter"}, params = {"startDate", "endDate", "startTime", "endTime"})
+    public String filterMeals(@RequestParam(value = "startDate") String startDate,
                               @RequestParam(value = "endDate") String endDate, @RequestParam(value = "startTime") String startTime,
                               @RequestParam(value = "endTime") String endTime,
                               Model model) {
@@ -64,8 +62,8 @@ public class JspMealController {
         return "meals";
     }
 
-    @GetMapping(value = {"/meals"}, params = {"action=update", "id"})
-    public String updateMeal(@RequestParam(value = "action") String action, @RequestParam(value = "id") Integer id, Model model) {
+    @GetMapping(value = {"/meals/update"}, params = {"id"})
+    public String updateMeal(@RequestParam(value = "id") Integer id, Model model) {
         log.info("update meals");
         int userId = SecurityUtil.authUserId();
         Meal meal = service.get(id, userId);
@@ -75,8 +73,8 @@ public class JspMealController {
         return "mealForm";
     }
 
-    @GetMapping(value = {"/meals"}, params = {"action=create"})
-    public String createMeal(@RequestParam(value = "action") String action,  Model model) {
+    @GetMapping(value = {"/meals/create"})
+    public String createMeal(Model model) {
         log.info("create meals");
         Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
 //        int userId = SecurityUtil.authUserId();
