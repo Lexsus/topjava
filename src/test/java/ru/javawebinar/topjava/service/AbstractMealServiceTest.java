@@ -5,6 +5,7 @@ import org.junit.Assume;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import ru.javawebinar.topjava.Profiles;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -28,7 +29,7 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
 
     private boolean isJdbcActiveProfile() {
         return Arrays.stream(environment.getActiveProfiles()).anyMatch(
-                env -> (env.equalsIgnoreCase("jdbc")));
+                env -> (env.equalsIgnoreCase(Profiles.JDBC)));
     }
 
     @Test

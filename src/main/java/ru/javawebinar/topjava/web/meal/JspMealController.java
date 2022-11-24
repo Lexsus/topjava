@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.web;
+package ru.javawebinar.topjava.web.meal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -30,7 +31,7 @@ public class JspMealController {
     private MealService service;
 
     @RequestMapping(value = {"/meals"}, method = {RequestMethod.GET})
-    public String getMeals(Model model) {
+    public String get(Model model) {
         log.info("meals");
         int userId = SecurityUtil.authUserId();
         log.info("getAll for user {}", userId);
@@ -38,7 +39,7 @@ public class JspMealController {
         return "meals";
     }
     @GetMapping(value = {"/meals/delete"}, params = {"id"})
-    public String deleteMeal(@RequestParam(value = "id") Integer id, Model model) {
+    public String delete(@RequestParam(value = "id") Integer id, Model model) {
         log.info("delete meals");
         int userId = SecurityUtil.authUserId();
         service.delete(id, userId);
@@ -46,10 +47,10 @@ public class JspMealController {
     }
 
     @GetMapping(value = {"/meals/filter"}, params = {"startDate", "endDate", "startTime", "endTime"})
-    public String filterMeals(@RequestParam(value = "startDate") String startDate,
-                              @RequestParam(value = "endDate") String endDate, @RequestParam(value = "startTime") String startTime,
-                              @RequestParam(value = "endTime") String endTime,
-                              Model model) {
+    public String filter(@RequestParam(value = "startDate") String startDate,
+                         @RequestParam(value = "endDate") String endDate, @RequestParam(value = "startTime") String startTime,
+                         @RequestParam(value = "endTime") String endTime,
+                         Model model) {
         LocalDate localStartDate = parseLocalDate(startDate);
         LocalDate localEndDate = parseLocalDate(endDate);
         LocalTime localStartTime = parseLocalTime(startTime);
@@ -63,30 +64,25 @@ public class JspMealController {
     }
 
     @GetMapping(value = {"/meals/update"}, params = {"id"})
-    public String updateMeal(@RequestParam(value = "id") Integer id, Model model) {
+    public String update(@RequestParam(value = "id") Integer id, Model model) {
         log.info("update meals");
         int userId = SecurityUtil.authUserId();
         Meal meal = service.get(id, userId);
-//        service.update(meal, userId);
         model.addAttribute("meal", meal);
 
         return "mealForm";
     }
 
     @GetMapping(value = {"/meals/create"})
-    public String createMeal(Model model) {
+    public String create(Model model) {
         log.info("create meals");
         Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
-//        int userId = SecurityUtil.authUserId();
-//        Meal meal = service.get(id, userId);
-//        service.update(meal, userId);
         model.addAttribute("meal", meal);
-
         return "mealForm";
     }
 
     @PostMapping("/meals")
-    public String setMeal(HttpServletRequest request) throws UnsupportedEncodingException {
+    public String save(HttpServletRequest request) throws UnsupportedEncodingException {
         request.setCharacterEncoding("UTF-8");
         Meal meal = new Meal(
                 LocalDateTime.parse(request.getParameter("dateTime")),
