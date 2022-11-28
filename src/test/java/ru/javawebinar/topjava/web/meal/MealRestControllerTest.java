@@ -8,7 +8,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
-import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
@@ -17,7 +16,6 @@ import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -85,21 +83,13 @@ public class MealRestControllerTest extends AbstractControllerTest {
                         SecurityUtil.authUserCaloriesPerDay()))));
     }
 
-//    @Test
-//    void getBetweenInclusive() {
-//        MEAL_MATCHER.assertMatch(service.getBetweenInclusive(
-//                        LocalDate.of(2020, Month.JANUARY, 30),
-//                        LocalDate.of(2020, Month.JANUARY, 30), USER_ID),
-//                meal3, meal2, meal1);
-//    }
-
     @Test
     void getBetweenInclusive() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL+"/filter?startDate=2020-01-03T00:00:30&endDate=2020-01-30T23:59:00"))
+        perform(MockMvcRequestBuilders.get(REST_URL + "/filter?startDate=2020-01-03T00:00:30&endDate=2020-01-30T23:59:00"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(JsonUtil.writeValue(MealsUtil.getTos(
-                        mealService.getBetweenInclusive( LocalDate.of(2020, Month.JANUARY, 30),LocalDate.of(2020, Month.JANUARY, 30),USER_ID),
+                        mealService.getBetweenInclusive(LocalDate.of(2020, Month.JANUARY, 30), LocalDate.of(2020, Month.JANUARY, 30), USER_ID),
                         SecurityUtil.authUserCaloriesPerDay()))));
     }
 }
