@@ -32,32 +32,41 @@
     <hr>
     <a href="meals/create"><spring:message code="meal.add"/></a>
     <hr>
-    <table border="1" cellpadding="8" cellspacing="0">
-        <thead>
-        <tr>
-            <th><spring:message code="meal.dateTime"/></th>
-            <th><spring:message code="meal.description"/></th>
-            <th><spring:message code="meal.calories"/></th>
-            <th></th>
-            <th></th>
-        </tr>
-        </thead>
-        <c:forEach items="${requestScope.meals}" var="meal">
-            <jsp:useBean id="meal" type="ru.javawebinar.topjava.to.MealTo"/>
-            <tr data-meal-excess="${meal.excess}">
-                <td>
-                        <%--${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}--%>
-                        <%--<%=TimeUtil.toString(meal.getDateTime())%>--%>
-                        <%--${fn:replace(meal.dateTime, 'T', ' ')}--%>
-                        ${fn:formatDateTime(meal.dateTime)}
-                </td>
-                <td>${meal.description}</td>
-                <td>${meal.calories}</td>
-                <td><a href="meals/update?id=${meal.id}"><spring:message code="common.update"/></a></td>
-                <td><a href="meals/delete?id=${meal.id}"><spring:message code="common.delete"/></a></td>
-            </tr>
-        </c:forEach>
-    </table>
+    <div class="jumbotron pt-4">
+        <div class="container">
+            <h3 class="text-center"><spring:message code="user.title"/></h3>
+            <button class="btn btn-primary">
+                <span class="fa fa-plus"></span>
+                <spring:message code="common.add"/>
+            </button>
+            <table class="table table-striped mt-3">
+                <thead>
+                <tr>
+                    <th><spring:message code="meal.dateTime"/></th>
+                    <th><spring:message code="meal.description"/></th>
+                    <th><spring:message code="meal.calories"/></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <c:forEach items="${requestScope.meals}" var="meal">
+                    <jsp:useBean id="meal" type="ru.javawebinar.topjava.to.MealTo"/>
+                    <tr data-meal-excess="${meal.excess}">
+                        <td>
+                                <%--${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}--%>
+                                <%--<%=TimeUtil.toString(meal.getDateTime())%>--%>
+                                <%--${fn:replace(meal.dateTime, 'T', ' ')}--%>
+                                ${fn:formatDateTime(meal.dateTime)}
+                        </td>
+                        <td>${meal.description}</td>
+                        <td>${meal.calories}</td>
+                        <td><a><span class="fa fa-pencil"></span></a></td>
+                        <td><a><span class="fa fa-remove"></span></a></td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </div>
+    </div>
 </section>
 <jsp:include page="fragments/footer.jsp"/>
 </body>
