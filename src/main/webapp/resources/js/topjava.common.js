@@ -41,8 +41,8 @@ function updateTable() {
 function save() {
     $.ajax({
         type: "POST",
-        url: ctx.ajaxUrl,
-        data: form.serialize()
+        data: form.serialize(),
+        url: ctx.ajaxUrl
     }).done(function () {
         $("#editRow").modal("hide");
         updateTable();
