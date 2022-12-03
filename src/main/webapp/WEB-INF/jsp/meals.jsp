@@ -6,7 +6,8 @@
 <jsp:include page="fragments/headTag.jsp"/>
 <body>
 <jsp:include page="fragments/bodyHeader.jsp"/>
-
+<script src="resources/js/topjava.common.js" defer></script>
+<script src="resources/js/topjava.meals.js" defer></script>
 <section>
     <h3><spring:message code="meal.title"/></h3>
 
@@ -29,17 +30,14 @@
         </dl>
         <button type="submit"><spring:message code="meal.filter"/></button>
     </form>
-    <hr>
-    <a href="meals/create"><spring:message code="meal.add"/></a>
-    <hr>
     <div class="jumbotron pt-4">
         <div class="container">
-            <h3 class="text-center"><spring:message code="user.title"/></h3>
-            <button class="btn btn-primary">
+            <h3 class="text-center"><spring:message code="meal.title"/></h3>
+            <button class="btn btn-primary" onclick="add()">
                 <span class="fa fa-plus"></span>
                 <spring:message code="common.add"/>
             </button>
-            <table class="table table-striped mt-3">
+            <table class="table table-striped" id="datatableMeals">
                 <thead>
                 <tr>
                     <th><spring:message code="meal.dateTime"/></th>
@@ -51,8 +49,9 @@
                 </thead>
                 <c:forEach items="${requestScope.meals}" var="meal">
                     <jsp:useBean id="meal" type="ru.javawebinar.topjava.to.MealTo"/>
-                    <tr data-meal-excess="${meal.excess}">
-                        <td>
+<%--                    <tr data-meal-excess="${meal.excess}">--%>
+                    <tr data-meal-excess="${meal.excess}" id="${meal.id}">
+                    <td>
                                 <%--${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}--%>
                                 <%--<%=TimeUtil.toString(meal.getDateTime())%>--%>
                                 <%--${fn:replace(meal.dateTime, 'T', ' ')}--%>
@@ -61,7 +60,7 @@
                         <td>${meal.description}</td>
                         <td>${meal.calories}</td>
                         <td><a><span class="fa fa-pencil"></span></a></td>
-                        <td><a><span class="fa fa-remove"></span></a></td>
+                        <td><a class="delete" ><span class="fa fa-remove"></span></a></td>
                     </tr>
                 </c:forEach>
             </table>
