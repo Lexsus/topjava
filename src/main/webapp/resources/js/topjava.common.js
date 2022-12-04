@@ -9,6 +9,7 @@ function makeEditable(datatableApi) {
         }
     });
 
+
     $(document).ajaxError(function (event, jqXHR, options, jsExc) {
         failNoty(jqXHR);
     });
@@ -48,6 +49,25 @@ function save() {
         updateTable();
         successNoty("Saved");
     });
+}
+
+// навешиваем на кнопку filter обработчик
+$('#formFilter').submit(function () {
+    filterTable();
+    return false;
+});
+
+function filterTable() {
+    $.ajax({
+        type: "GET",
+        url: ctx.ajaxUrl + 'filter',
+        data: $('#formFilter').serialize(),
+        success: updateTableByData
+    });
+}
+
+function updateTableByData(data) {
+    ctx.datatableApi.clear().rows.add(data).draw();
 }
 
 let failedNote;
