@@ -7,6 +7,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.to.MealTo;
 
 import java.time.LocalDate;
@@ -17,6 +18,12 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "ui/meals", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MealUIController extends AbstractMealController {
+
+    @Override
+    @GetMapping
+    public List<MealTo> getAll() {
+        return super.getAll();
+    }
 
     @Override
     @DeleteMapping("/{id}")
@@ -39,8 +46,7 @@ public class MealUIController extends AbstractMealController {
             @RequestParam @Nullable LocalDate startDate,
             @RequestParam @Nullable LocalDate endDate,
             @RequestParam @Nullable LocalTime startTime,
-            @RequestParam @Nullable LocalTime endTime,
-            @RequestParam @Nullable String unused) {  // unused это типа заглушка чтобы принять паразитный параметр
+            @RequestParam @Nullable LocalTime endTime) {
         return super.getBetween(startDate, startTime, endDate, endTime);
     }
 }

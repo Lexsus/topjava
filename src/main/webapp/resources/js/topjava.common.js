@@ -66,8 +66,8 @@ function filterTable() {
     });
 }
 
-function updateTableByData(data) {
-    ctx.datatableApi.clear().rows.add(data).draw();
+function updateTableByData(info) {
+    ctx.datatableApi.clear().rows.add(info).draw();
 }
 
 let failedNote;
