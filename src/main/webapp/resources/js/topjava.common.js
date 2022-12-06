@@ -54,15 +54,16 @@ function save() {
 // навешиваем на кнопку filter обработчик
 $('#formFilter').submit(function () {
     filterTable();
-    return false;
 });
 
 function filterTable() {
     $.ajax({
         type: "GET",
         url: ctx.ajaxUrl + 'filter',
-        data: $('#formFilter').serialize(),
-        success: updateTableByData
+        data: $('#formFilter').serialize()
+    }).done(function (data) {
+        updateTableByData(data);
+        successNoty("Filtered");
     });
 }
 
