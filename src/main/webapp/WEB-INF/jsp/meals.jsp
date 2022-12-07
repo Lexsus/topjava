@@ -42,7 +42,7 @@
                 <spring:message code="meal.filter"/>
             </button>
         </form>
-        <table class="table table-striped" id="datatableMeals">
+        <table class="table table-striped" id="datatable">
             <thead>
             <tr>
                 <th><spring:message code="meal.dateTime"/></th>

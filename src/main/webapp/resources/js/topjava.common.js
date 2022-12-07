@@ -54,6 +54,7 @@ function save() {
 // навешиваем на кнопку filter обработчик
 $('#formFilter').submit(function () {
     filterTable();
+    return false; //<-- чтобы не отправлялись данные формы
 });
 
 function filterTable() {
