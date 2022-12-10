@@ -5,9 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.util.UserUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
@@ -48,7 +51,20 @@ public abstract class AbstractMealController {
         return service.create(meal, userId);
     }
 
+    public void create(MealTo mealTo) {
+        int userId = SecurityUtil.authUserId();
+        log.info("create {}", mealTo);
+        checkNew(mealTo);
+        service.create(MealsUtil.createNewFromTo(mealTo),userId);
+    }
+
     public void update(Meal meal, int id) {
+        log.info("update {} with id={}", meal, id);
+        assureIdConsistent(meal, id);
+        service.update(meal,id);
+    }
+
+    public void update(MealTo meal, int id) {
         int userId = SecurityUtil.authUserId();
         log.info("update {} for user {}", meal, userId);
         assureIdConsistent(meal, id);
