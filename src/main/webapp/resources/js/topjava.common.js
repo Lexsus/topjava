@@ -18,12 +18,6 @@ function add() {
     $("#editRow").modal();
 }
 
-function addMeal() {
-    $("#modalTitle").html(i18n["addTitleMeal"]);
-    form.find(":input").val("");
-    $("#editRow").modal();
-}
-
 function updateRow(id) {
     form.find(":input").val("");
     $("#modalTitle").html(i18n["editTitle"]);
@@ -103,4 +97,3 @@ function failNoty(jqXHR) {
     });
     failedNote.show()
 }
-
