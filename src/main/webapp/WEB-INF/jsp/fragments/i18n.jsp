@@ -5,6 +5,8 @@
     const i18n = [];
     i18n["addTitle"] = '<spring:message code="user.add"/>';
     i18n["editTitle"] = '<spring:message code="user.edit"/>';
+    i18n["addTitleMeal"] = '<spring:message code="meal.add"/>';
+    i18n["editTitleMeal"] = '<spring:message code="meal.edit"/>';
 
     <c:forEach var="key" items='<%=new String[]{"common.deleted","common.saved","common.enabled","common.disabled","common.errorStatus","common.confirm",
     "common.add","common.save"}%>'>
