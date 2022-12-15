@@ -58,7 +58,12 @@ $(function () {
                     0,
                     "desc"
                 ]
-            ]
+            ],
+            "createdRow": function (row, data, dataIndex) {
+                if (!data.excess) {
+                    $(row).attr("data-user-enabled", false);
+                }
+            }
         })
     );
 });
