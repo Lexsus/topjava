@@ -7,6 +7,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,10 @@ import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.util.exception.ErrorType.*;
 
@@ -32,6 +37,15 @@ public class ExceptionInfoHandler {
     @ExceptionHandler(NotFoundException.class)
     public ErrorInfo handleError(HttpServletRequest req, NotFoundException e) {
         return logAndGetErrorInfo(req, e, false, DATA_NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(TransactionSystemException.class)
+    public ErrorInfo handleConstraintViolationException(
+            HttpServletRequest req, ConstraintViolationException e
+    ) {
+        return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
+//        return handleError(request, BAD_REQUEST, new BadRequestException(ex.getMessage()));
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)  // 409
@@ -60,6 +74,9 @@ public class ExceptionInfoHandler {
         } else {
             log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
         }
+//        result.getFieldErrors().stream()
+//                .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
+//                .collect(Collectors.joining("<br>"))
         return new ErrorInfo(req.getRequestURL(), errorType, rootCause.toString());
     }
 }
